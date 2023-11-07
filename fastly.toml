@@ -1,0 +1,22 @@
+# This file describes a Fastly Compute package. To learn more visit:
+# https://developer.fastly.com/reference/fastly-toml/
+
+authors = [""]
+description = ""
+language = "javascript"
+manifest_version = 3
+name = "compute-js-apiclarity"
+service_id = ""
+
+[scripts]
+  build = "npm run build"
+  post_init = "npm install"
+
+[local_server.backends]
+
+    [local_server.backends.ngwaf_api_origin]
+    url = "https://dashboard.signalsciences.net"
+
+    [local_server.backends.apiclarity_origin]
+    url = "http://127.0.0.1:9000"
+

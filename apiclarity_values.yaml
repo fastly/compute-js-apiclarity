@@ -1,0 +1,289 @@
+####################################################################################### 
+## https://github.com/openclarity/apiclarity#install-apiclarity-in-a-k8s-cluster-using-helm
+## install
+# helm install --values values.yaml --create-namespace apiclarity apiclarity/apiclarity -n apiclarity
+## Uninstall and clean
+# helm uninstall apiclarity -n apiclarity 
+# kubectl delete pvc -l app.kubernetes.io/instance=apiclarity -n apiclarity
+## Set up port forwarding for the UI and traces, respectively
+# kubectl port-forward -n apiclarity svc/apiclarity-apiclarity 8443:8443
+# kubectl port-forward -n apiclarity svc/apiclarity-apiclarity 9000:9000
+## Get the Token
+# curl --http1.1 --insecure -s -H 'Content-Type: application/json' -d '{"name":"apigee_gateway","type":"APIGEE_X"}' https://localhost:8443/api/control/traceSources|jq -r '.token'
+
+## Global Values
+global:
+  ## Database password
+  ##
+  databasePassword: apiclarity
+
+  ## Docker image
+  ##
+  docker:
+    ## Configure registry
+    ##
+    registry: "ghcr.io/openclarity"
+
+  ## Whether or not persistence is enabled
+  ##
+  persistentVolume:
+    ## Persistent Volume size
+    ##
+    size: 100Mi
+
+    ## Persistent Volume Storage Class
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    # storageClass: ""
+
+  traceSampling:
+    enable: false
+
+  bflaAutomaticLearningAndDetection:
+    enable: false
+
+## End of Global Values
+#######################################################################################
+
+#######################################################################################
+## APIClarity Values
+
+apiclarity:
+
+  # Send APIClarity notifications to this backend
+  # notificationURLPrefix: example.local:8888/
+
+  tls:
+    enabled: true
+    # Secret that contains server tls key and cert
+    tlsServerCertsSecretName: "apiclarity-tls"
+    # TLS secret (tlsServerCertsSecretName) cert field name
+    tlsServerCertFileName: "server.crt"
+    # TLS secret (tlsServerCertsSecretName) key field name
+    tlsServerKeyFileName: "server.key"
+    # ConfigMap that contains the root cert
+    rootCACertConfigMapName: "apiclarity-root-ca.crt"
+    # Root cert ConfigMap (rootCACertConfigMapName) cert field name
+    rootCertFileName: "ca.crt"
+
+  # Defines env variables for apiclarity pod
+  env:
+    plugins:
+      ## ENV_1: example123
+      FUZZER_DEPLOYMENT_TYPE: "configmap"
+
+  ## Docker Image values.
+  docker:
+    imageTag: "v0.14.5"
+    imagePullPolicy: Always
+
+  ## Logging level (debug, info, warning, error, fatal, panic).
+  logLevel: warning
+
+  ## Enable/disable rbac resource creation (i.e. ClusterRole, ClusterRoleBinding)
+  rbac:
+    create: true
+
+  ## ServiceAccount settings
+  serviceAccount:
+    ## Enable/disable ServiceAccount creation. Set false to use a pre-existing account
+    create: true
+    ## Override name of ServiceAccount
+    # name:
+
+  ## Resource limits for APIClarity deployment
+  resources:
+    requests:
+      memory: "200Mi"
+      cpu: "100m"
+    limits:
+      memory: "1000Mi"
+      cpu: "1000m"
+
+  ## Resource limits for APIClarity init container deployment
+  initResources:
+    requests:
+      memory: "200Mi"
+      cpu: "100m"
+    limits:
+      memory: "1000Mi"
+      cpu: "200m"
+
+## End of APIClarity Values
+#######################################################################################
+
+#######################################################################################
+## APIClarity Postgres Values
+
+apiclarity-postgresql:
+  enabled: true
+
+  ## Specify posgtresql image
+  # image:
+    # registry: docker.io
+    # repository: bitnami/postgresql
+    # tag: 14.4.0-debian-11-r4
+
+  ## initdb parameters
+  # initdb:
+    ##  ConfigMap with scripts to be run at first boot
+    ##  NOTE: This will override initdb.scripts
+    # scriptsConfigMap
+    ##  Secret with scripts to be run at first boot (in case it contains sensitive information)
+    ##  NOTE: This can work along initdbScripts or initdbScriptsConfigMap
+    # scriptsSecret:
+    ## Specify the PostgreSQL username and password to execute the initdb scripts
+    # user:
+    # password:
+
+  ## Setup database name and password
+  auth:
+    existingSecret: apiclarity-postgresql-secret
+    database: apiclarity
+
+  ## Enable security context
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    runAsNonRoot: true
+
+# End of APIClarity Postgres Values
+#######################################################################################
+
+#######################################################################################
+## APIClarity Traffic Source Values
+
+trafficSource:
+  global:
+    ## Proxy configuration for the traffic source post install jobs
+    httpsProxy: ""
+    httpProxy: ""
+
+  envoyWasm:
+    ## Enable Envoy wasm traffic source
+    ##
+    enabled: false
+
+    ## Enable Istio verification in a Pre-Install Job
+    ##
+    enableIstioVerify: true
+
+    ## Enable APIClarity WASM filter in the following namespaces
+    ##
+    namespaces:
+      - default
+
+  tap:
+    ## Enable Tap traffic source
+    ##
+    enabled: false
+
+    ## Enable APIClarity Tap in the following namespaces
+    ##
+    namespaces:
+      - default
+
+    ## APIClarity Tap logging level (debug, info, warning, error, fatal, panic)
+    ##
+    logLevel: "warning"
+
+    ## Docker Image values.
+    docker:
+      imageTag: "v0.14.5"
+      imagePullPolicy: Always
+
+  kong:
+    ## Enable Kong traffic source
+    ##
+    enabled: false
+
+    ## Carry out post-install patching of kong container to install plugin
+    patch: true
+
+    ## Specify the name of the proxy container in Kong gateway to patch
+    ##
+    containerName: "proxy"
+    ## Specify the name of the Kong gateway deployment to patch
+    ##
+    deploymentName: ""
+    ## Specify the namespace of the Kong gateway deployment to patch
+    ##
+    deploymentNamespace: ""
+    ## Specify the name of the ingress resource to patch
+    ##
+    ingressName: ""
+    ## Specify the namespace of the ingress resource to patch
+    ##
+    ingressNamespace: ""
+
+  tyk:
+    ## Enable Tyk traffic source
+    ##
+    enabled: false
+
+    ## Enable Tyk verification in a Pre-Install Job
+    ##
+    enableTykVerify: true
+    ## Specify the name of the proxy container in Tyk gateway to patch
+    ##
+    containerName: "proxy"
+    ## Specify the name of the Tyk gateway deployment to patch
+    ##
+    deploymentName: ""
+    ## Specify the namespace of the Tyk gateway deployment to patch
+    ##
+    deploymentNamespace: ""
+
+# End of APIClarity Traffic Source Values
+#######################################################################################
+
+#######################################################################################
+## APIClarity Runtime Fuzzing Values
+
+APIClarityRuntimeFuzzing:
+
+  ## Fuzzer jobs and pods labels.
+  ##
+  labels:
+    app: apiclarity-fuzzer
+
+  docker:
+    ## Fuzzer docker image to load
+    ##
+    image: gcr.io/eticloud/k8sec/scn-dast:f425b0aefe272d6707649c0a9845eabceade7f91
+
+  ## Fuzzing methods (scn-fuzzer, restler, crud). It is a comma separated list.
+  ##
+  methods: "scn-fuzzer,restler,crud"
+  ## Internal use only, do not change
+  ##
+  restlerRootPath: "/tmp"
+  ## Internal use only, do not change
+  ##
+  restlerTokenInjPath: "/app/"
+  debug: false
+
+  ## Resource limits for Fuzzer deployment
+  ##
+  resources:
+    requests:
+      memory: "200Mi"
+      cpu: "100m"
+    limits:
+      memory: "1000Mi"
+      cpu: "200m"
+
+# End of APIClarity Runtime Fuzzing Values
+#######################################################################################
+
+#######################################################################################
+## APIClarity External Trace Source Values
+
+supportExternalTraceSource:
+  enabled: true
+# End of APIClarity External Trace Source Values
+#######################################################################################
+
