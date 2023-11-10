@@ -1,5 +1,5 @@
 # Integrate sampled Fastly Next-Gen WAF logs with APIclarity
-Extact data from the NGWAF logs and send that request and response data to locally running APIClarity to document you API.
+Extract data from the NGWAF logs and send that request and response data to locally running APIClarity to document you API.
 
 https://docs.fastly.com/en/ngwaf/extract-your-data
 
