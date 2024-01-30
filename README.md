@@ -30,7 +30,7 @@ Then just run `make build`
 The request to Fastly Compute environment will do the following. 
 * Query for a period of times worth of NGWAF Sampled logs
 * Format that returned data for APIclarity
-* Send the formatted dat to APIclarity
+* Send the formatted data to APIclarity
 
 Capture the APIclarity Trace Source Token
 ```
