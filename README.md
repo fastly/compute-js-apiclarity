@@ -1,5 +1,5 @@
-# Integrate sampled Fastly Next-Gen WAF logs with APIclarity
-Extract data from the NGWAF logs and send that request and response data to locally running APIclarity to document you API.
+# Integrate sampled Fastly Next-Gen WAF logs with APIClarity
+Extract data from the NGWAF logs and send that request and response data to locally running APIClarity to document you API.
 
 https://docs.fastly.com/en/ngwaf/extract-your-data
 
@@ -23,21 +23,21 @@ https://github.com/openclarity/apiclarity
 
 Make sure you have installed the necessary software in the pre-reqs.
 
-## Build APIclarity and start a locally running Fastly Compute environment
+## Build APIClarity and start a locally running Fastly Compute environment
 Run `npm i` to install necessary packages.
 Then just run `make build`
 
-## Capture the APIclarity token and send a request to the Fastly Compute environment.
+## Capture the APIClarity token and send a request to the Fastly Compute environment.
 `make demo`
 The request to Fastly Compute environment will do the following. 
 * Query for a period of times worth of NGWAF Sampled logs
-* Format that returned data for APIclarity
-* Send the formatted data to APIclarity
+* Format that returned data for APIClarity
+* Send the formatted data to APIClarity
 
 ## Access the APIClarity UI
 Navigate to the URL at the end of the output from the previous `make demo` command to access the APIClarity UI. You will be able to generate an OpenAPI spec from APIClarity UI.
 
-Capture the APIclarity Trace Source Token
+Capture the APIClarity Trace Source Token
 ```
 TRACE_SOURCE_TOKEN=$(curl --http1.1 --insecure -s -H 'Content-Type: application/json' -d '{"name":"apigee_gateway","type":"APIGEE_X"}' https://localhost:8443/api/control/traceSources|jq -r '.token')
 ```
