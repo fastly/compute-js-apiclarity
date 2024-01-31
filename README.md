@@ -8,10 +8,10 @@ https://github.com/openclarity/apiclarity
 ## Pre-reqs
 
 * [Fastly CLI](https://developer.fastly.com/learning/tools/cli/#installing)
-* Fastly Next-Gen WAF API Token
+* [Fastly Next-Gen WAF API Token](https://docs.fastly.com/en/ngwaf/using-our-api#creating-api-access-tokens)
 * [npm](https://www.npmjs.com/)
-* kubectl
-* docker cli
+* [kubectl](https://kubernetes.io/docs/reference/kubectl/)
+* [docker cli](https://docs.docker.com/engine/reference/commandline/cli/)
 * Must set the following environment variables
     * NGWAF_EMAIL 
     * NGWAF_TOKEN 
@@ -20,6 +20,8 @@ https://github.com/openclarity/apiclarity
 
 
 # Quickstart
+
+Make sure you have installed the necessary software in the pre-reqs.
 
 ## Build APIclarity and start a locally running Fastly Compute environment
 Run `npm i` to install necessary packages.
@@ -31,6 +33,9 @@ The request to Fastly Compute environment will do the following.
 * Query for a period of times worth of NGWAF Sampled logs
 * Format that returned data for APIclarity
 * Send the formatted data to APIclarity
+
+## Access the APIClarity UI
+Navigate to the URL at the end of the output from the previous `make demo` command to access the APIClarity UI. You will be able to generate an OpenAPI spec from APIClarity UI.
 
 Capture the APIclarity Trace Source Token
 ```
