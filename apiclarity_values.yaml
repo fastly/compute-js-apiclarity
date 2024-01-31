@@ -57,17 +57,17 @@ apiclarity:
   # notificationURLPrefix: example.local:8888/
 
   tls:
-    enabled: true
+    enabled: false
     # Secret that contains server tls key and cert
-    tlsServerCertsSecretName: "apiclarity-tls"
+    # tlsServerCertsSecretName: "apiclarity-tls"
     # TLS secret (tlsServerCertsSecretName) cert field name
-    tlsServerCertFileName: "server.crt"
+    # tlsServerCertFileName: "server.crt"
     # TLS secret (tlsServerCertsSecretName) key field name
-    tlsServerKeyFileName: "server.key"
+    # tlsServerKeyFileName: "server.key"
     # ConfigMap that contains the root cert
-    rootCACertConfigMapName: "apiclarity-root-ca.crt"
+    # rootCACertConfigMapName: "apiclarity-root-ca.crt"
     # Root cert ConfigMap (rootCACertConfigMapName) cert field name
-    rootCertFileName: "ca.crt"
+    # rootCertFileName: "ca.crt"
 
   # Defines env variables for apiclarity pod
   env:
