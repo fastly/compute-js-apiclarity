@@ -45,7 +45,7 @@ async function get_sampled_logs(ngwaf_email, ngwaf_token, corpName, siteName) {
   let until = Math.floor(Date.now()/1000) - 300 - Math.floor(Date.now()/1000) % 60;
   
   // build the request for request sampling
-  const url = `https://dashboard.signalsciences.net/api/v0/corps/${corpName}/sites/${siteName}/feed/requests?from=${from}&until=${until}`;
+  const url = `https://dashboard.signalsciences.net/api/v0/corps/${corpName}/sites/${siteName}/requests?q=from%3A${from}%20until%3A${until}`;
   const headers = {
     'x-api-user': ngwaf_email,
     'x-api-token': ngwaf_token,
